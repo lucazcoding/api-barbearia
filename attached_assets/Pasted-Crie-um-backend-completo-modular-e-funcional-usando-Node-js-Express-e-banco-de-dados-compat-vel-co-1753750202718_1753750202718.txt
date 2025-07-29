@@ -1,0 +1,112 @@
+Crie um backend completo, modular e funcional usando Node.js, Express e banco de dados compatível com o ambiente Replit (PostgreSQL ou armazenamento em memória, evite SQLite). O backend é para um sistema de agendamento de barbearia com múltiplos tipos de usuários: SUPER_ADMIN, ADMIN, BARBEIRO, e CLIENTE, com autenticação via JWT. Implemente as seguintes permissões e funcionalidades:
+
+
+⚠️ Importante: **não crie nenhuma interface HTML ou frontend visual**.  
+Caso o Replit exija algum tipo de visualização obrigatória, utilize apenas uma interface de documentação como **Swagger UI** ou equivalente para exibir os endpoints da API.
+
+
+Usuários e Permissões:
+
+    SUPER_ADMIN: acesso total ao sistema, incluindo gerenciamento de administradores, estatísticas globais, logs e configurações de sistema.
+
+    ADMIN: gerencia operações da barbearia como cadastro de barbeiros, controle financeiro e visualização de relatórios.
+
+    BARBEIRO: visualiza agendamentos atribuídos e marca como concluídos.
+
+    CLIENTE: realiza cadastro, login, agendamentos e gerencia seu perfil pessoal.
+
+Rotas principais:
+
+Autenticação:
+
+    POST /api/auth/login — Login por e-mail e senha, retornando token JWT.
+
+    POST /api/auth/logout — Logout (limpa sessão).
+
+    GET /api/auth/me — Retorna dados do usuário autenticado.
+
+Usuários:
+
+    POST /api/register — Cadastro de cliente.
+
+    POST /api/admins — Criar novo administrador (somente SUPER_ADMIN).
+
+    GET /api/admins — Listar administradores (SUPER_ADMIN).
+
+    DELETE /api/admins/:id — Excluir administrador (SUPER_ADMIN).
+
+    POST /api/barbeiros — Cadastrar barbeiro (ADMIN ou SUPER_ADMIN).
+
+    GET /api/barbeiros — Listar barbeiros.
+
+    PUT /api/users/:id — Atualizar perfil do usuário.
+
+    DELETE /api/users/:id — Excluir usuário (ADMIN ou superior).
+
+Agendamentos:
+
+    POST /api/appointments — Cliente cria agendamento com barbeiro, data e hora.
+
+    GET /api/appointments — Listagem:
+
+        CLIENTE: seus próprios
+
+        BARBEIRO: seus atribuídos
+
+        ADMIN/SUPER_ADMIN: todos
+
+    PUT /api/appointments/:id — Atualizar status (ex: concluído).
+
+    GET /api/appointments/pending — Visualizar agendamentos pendentes.
+
+    DELETE /api/appointments/:id — Exclusão por ADMIN/SUPER_ADMIN.
+
+    Agendamentos antigos e pendentes devem ser limpos automaticamente via scheduler (node-cron ou alternativa nativa).
+
+Financeiro (ADMIN/SUPER_ADMIN):
+
+    GET /api/reports/revenue — Relatório de receitas.
+
+    GET /api/expenses — Listar despesas.
+
+    POST /api/expenses — Cadastrar nova despesa.
+
+Sistema de Fidelidade (ADMIN configura, CLIENTE recebe):
+
+    A cada X serviços, o cliente recebe um voucher de desconto.
+
+    POST /api/vouchers/config — Configuração da regra (quantidade, validade, % desconto).
+
+    GET /api/vouchers — Cliente vê seus vouchers.
+
+    POST /api/vouchers/redeem — Resgatar voucher.
+
+Logs e Auditoria (SUPER_ADMIN):
+
+    GET /api/super-admin/logs — Ver logs do sistema (ações de usuários, logins, exclusões, etc).
+
+    POST /api/super-admin/toggle-logs — Ativar/desativar rastreamento.
+
+    Logs devem conter: tipo de ação, usuário, IP, User-Agent, timestamp.
+
+Outros:
+
+    POST /api/config/hours — ADMIN/SUPER_ADMIN configura horários disponíveis.
+
+    GET /api/config/hours — Consulta horários para agendamento.
+
+Arquitetura:
+
+    Use JWT para autenticação segura com middleware de proteção por função.
+
+    Utilize bcrypt para criptografar senhas.
+
+    Separe em pastas: controllers, routes, models, middleware, config, utils.
+
+    O banco deve conter tabelas relacionais: users, appointments, barbeiros, expenses, vouchers, logs, config.
+
+    O sistema deve rodar automaticamente no ambiente Replit com preview funcional da API (use Swagger UI ou outra visualização automática).
+
+    Implemente verificação de token em todas as rotas privadas.
+
+    Use UUIDs como id se possível para mais segurança.
